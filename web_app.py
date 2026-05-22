@@ -593,7 +593,7 @@ def gizlilik_politikasi():
 <p>Uygulamamız 13 yaşın altındaki çocuklara yönelik değildir ve bu yaş grubundan bilerek veri toplamayız.</p>
 
 <h2>İletişim</h2>
-<p>Gizlilik politikamızla ilgili sorularınız için: <a href="mailto:acerisa453@gmail.com">acerisa453@gmail.com</a></p>
+<p>Gizlilik politikamızla ilgili sorularınız için: <a href="mailto:safakacer55@gmail.com">safakacer55@gmail.com</a></p>
 </body>
 </html>'''
 
