@@ -555,6 +555,49 @@ def durum():
     return jsonify({'kalan_hak': kalan_hak, 'is_premium': is_premium, 'toplam_analiz': istat['toplam']})
 
 
+@app.route('/privacy')
+@app.route('/gizlilik')
+def gizlilik_politikasi():
+    return '''<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gizlilik Politikası - Satranç Koçu</title>
+<style>
+  body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #333; line-height: 1.6; }
+  h1 { color: #1a1a2e; } h2 { color: #16213e; margin-top: 30px; }
+  p { margin: 10px 0; }
+</style>
+</head>
+<body>
+<h1>Gizlilik Politikası</h1>
+<p><strong>Son güncelleme:</strong> Mayıs 2026</p>
+<p>Satranç Koçu uygulaması ("uygulama") olarak kullanıcılarımızın gizliliğine önem veriyoruz. Bu politika, hangi verileri topladığımızı ve nasıl kullandığımızı açıklar.</p>
+
+<h2>Toplanan Veriler</h2>
+<p>Uygulamamız aşağıdaki verileri toplar:</p>
+<ul>
+  <li><strong>E-posta adresi:</strong> Hesap oluşturma ve giriş için kullanılır.</li>
+  <li><strong>Satranç tahtası fotoğrafları:</strong> Analiz amacıyla yüklenen görseller sunucumuza gönderilir ve analiz sonrası silinir.</li>
+  <li><strong>Analiz geçmişi:</strong> Kullanıcının talep etmesi halinde analiz sonuçları kaydedilir.</li>
+</ul>
+
+<h2>Verilerin Kullanımı</h2>
+<p>Toplanan veriler yalnızca uygulamanın temel işlevlerini sağlamak için kullanılır. Verileriniz üçüncü taraflarla paylaşılmaz veya satılmaz.</p>
+
+<h2>Veri Güvenliği</h2>
+<p>Kullanıcı şifreleri şifrelenmiş olarak saklanır. Verileriniz güvenli sunucularda tutulmaktadır.</p>
+
+<h2>Çocukların Gizliliği</h2>
+<p>Uygulamamız 13 yaşın altındaki çocuklara yönelik değildir ve bu yaş grubundan bilerek veri toplamayız.</p>
+
+<h2>İletişim</h2>
+<p>Gizlilik politikamızla ilgili sorularınız için: <a href="mailto:acerisa453@gmail.com">acerisa453@gmail.com</a></p>
+</body>
+</html>'''
+
+
 if __name__ == '__main__':
     db.veritabanini_hazirla()
     app.run(debug=False, host='0.0.0.0', port=5000)
