@@ -1,0 +1,7 @@
+*.db
+*.exe
+__pycache__/
+*.pyc
+.env
+venv/
+*.zip

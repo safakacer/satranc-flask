@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c ' *)",
+      "Bash(npm --version)",
+      "Bash(npx expo *)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "Bash(pip install *)",
+      "Bash(ls /mnt/c/Users/acers/Desktop/satranc-app/ 2>/dev/null || echo \"Klasör yok\")",
+      "Bash(dir \"C:\\\\Users\\\\acers\\\\Desktop\")",
+      "Bash(dir \"C:\\\\Users\\\\acers\\\\Desktop\\\\satranc-app\")",
+      "Bash(dir \"C:\\\\Users\\\\acers\\\\Desktop\\\\satranc-app\\\\screens\")",
+      "Bash(git remote *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git branch *)",
+      "Bash(git push *)"
+    ]
+  }
+}

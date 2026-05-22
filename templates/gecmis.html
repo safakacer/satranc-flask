@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analiz Geçmişi — Satranç Koçu</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; padding: 32px 16px; }
+        .ust { display: flex; justify-content: space-between; align-items: center; max-width: 700px; margin: 0 auto 24px; }
+        h1 { font-size: 1.5rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .geri { color: #667eea; text-decoration: none; font-size: 0.85rem; }
+        .bos { text-align: center; padding: 48px; background: #16213e; border-radius: 12px; color: #888; max-width: 700px; margin: auto; }
+        .liste { max-width: 700px; margin: auto; display: flex; flex-direction: column; gap: 12px; }
+        .kart {
+            background: #16213e; border: 1px solid #0f3460;
+            border-radius: 12px; padding: 16px 20px;
+            display: grid; grid-template-columns: 1fr auto;
+            gap: 8px; align-items: center;
+        }
+        .kart:hover { border-color: #667eea; }
+        .hamle { font-family: monospace; font-size: 1.2rem; font-weight: 700; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .skor { font-size: 0.9rem; color: #aaa; margin-top: 2px; }
+        .platform { font-size: 0.75rem; padding: 2px 8px; border-radius: 10px; background: #0f3460; color: #888; }
+        .tarih { font-size: 0.75rem; color: #555; margin-top: 4px; text-align: right; }
+        .fen { font-size: 0.72rem; color: #444; font-family: monospace; margin-top: 6px; word-break: break-all; }
+        .sag { text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="ust">
+        <h1>📋 Analiz Geçmişi</h1>
+        <a class="geri" href="/">← Ana sayfaya dön</a>
+    </div>
+
+    {% if analizler %}
+    <div class="liste">
+        {% for a in analizler %}
+        <div class="kart">
+            <div>
+                <div class="hamle">{{ a[1] }}</div>
+                <div class="skor">Skor: {{ a[2] }}</div>
+                <div class="fen">{{ a[0] }}</div>
+            </div>
+            <div class="sag">
+                <div><span class="platform">{{ a[3] }}</span></div>
+                <div class="tarih">{{ a[4][:16] }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bos">
+        <div style="font-size:2rem;margin-bottom:12px">♟️</div>
+        Henüz analiz yapmadın.<br>
+        <a href="/" style="color:#667eea;text-decoration:none;">İlk analizini yap →</a>
+    </div>
+    {% endif %}
+</body>
+</html>

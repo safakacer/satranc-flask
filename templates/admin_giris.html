@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin — Satranç Koçu</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .kart { background: #16213e; border: 1px solid #0f3460; border-radius: 14px; padding: 32px; width: 100%; max-width: 360px; }
+        h2 { margin-bottom: 20px; font-size: 1.2rem; color: #aaa; }
+        input { width: 100%; padding: 11px 14px; background: #0f3460; border: 1px solid #1a4a80; border-radius: 8px; color: #eee; font-size: 0.95rem; outline: none; margin-bottom: 14px; }
+        .btn { width: 100%; padding: 12px; background: #667eea; border: none; border-radius: 8px; color: white; font-size: 1rem; cursor: pointer; }
+        .hata { color: #f88; font-size: 0.85rem; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+<div class="kart">
+    <h2>🔐 Admin Girişi</h2>
+    <form method="POST">
+        {% if hata %}<div class="hata">❌ Şifre hatalı.</div>{% endif %}
+        <input type="password" name="sifre" placeholder="Admin şifresi" autofocus>
+        <button class="btn">Giriş</button>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium — Satranç Koçu</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+        .kart { background: #16213e; border: 1px solid #0f3460; border-radius: 16px; padding: 36px 32px; width: 100%; max-width: 460px; }
+        h1 { font-size: 1.6rem; background: linear-gradient(135deg, #f59e0b, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; }
+        .alt { color: #888; font-size: 0.85rem; margin-bottom: 24px; }
+
+        .ozellik-listesi { list-style: none; margin-bottom: 24px; }
+        .ozellik-listesi li { padding: 8px 0; border-bottom: 1px solid #1a3a6e; font-size: 0.9rem; color: #ccc; }
+        .ozellik-listesi li:last-child { border-bottom: none; }
+        .ozellik-listesi li span { color: #4ade80; margin-right: 8px; }
+
+        .fiyat-kutu { background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(249,115,22,0.05)); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 18px; margin-bottom: 24px; text-align: center; }
+        .fiyat { font-size: 2.4rem; font-weight: 700; color: #f59e0b; }
+        .fiyat span { font-size: 1rem; color: #888; }
+
+        .iban-kutu { background: #0f3460; border-radius: 10px; padding: 16px; margin-bottom: 20px; }
+        .iban-kutu label { font-size: 0.78rem; color: #888; display: block; margin-bottom: 4px; }
+        .iban-no { font-family: monospace; font-size: 1rem; letter-spacing: 1px; color: #667eea; cursor: pointer; }
+        .iban-no:hover { text-decoration: underline; }
+        .kopyalandi { font-size: 0.75rem; color: #4ade80; display: none; margin-left: 8px; }
+
+        label { display: block; font-size: 0.82rem; color: #aaa; margin-bottom: 6px; margin-top: 16px; }
+        input, textarea { width: 100%; padding: 11px 14px; background: #0f3460; border: 1px solid #1a4a80; border-radius: 8px; color: #eee; font-size: 0.9rem; outline: none; }
+        textarea { resize: vertical; min-height: 70px; font-family: inherit; }
+
+        .btn { width: 100%; margin-top: 18px; padding: 13px; background: linear-gradient(135deg, #f59e0b, #f97316); border: none; border-radius: 10px; color: white; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        .basari { padding: 14px; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); border-radius: 10px; color: #4ade80; margin-bottom: 20px; font-size: 0.9rem; }
+        .geri { display: block; text-align: center; margin-top: 16px; color: #667eea; text-decoration: none; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+<div class="kart">
+    <h1>💎 Premium Üyelik</h1>
+    <p class="alt">Sınırsız analiz, daha derin Stockfish, top 3 hamle</p>
+
+    <ul class="ozellik-listesi">
+        <li><span>✅</span> Sınırsız günlük analiz</li>
+        <li><span>✅</span> Top 3 alternatif hamle</li>
+        <li><span>✅</span> Derin Stockfish analizi (3x daha uzun)</li>
+        <li><span>✅</span> Analiz geçmişi</li>
+        <li><span>✅</span> Öncelikli destek</li>
+    </ul>
+
+    <div class="fiyat-kutu">
+        <div class="fiyat">50₺ <span>/ ay</span></div>
+    </div>
+
+    {% if mesaj %}
+    <div class="basari">{{ mesaj }}</div>
+    {% else %}
+    <div class="iban-kutu">
+        <label>Havale / EFT yapılacak IBAN</label>
+        <span class="iban-no" onclick="kopyala()">{{ iban }}</span>
+        <span class="kopyalandi" id="kopyalandi">✓ Kopyalandı</span>
+    </div>
+
+    <form method="POST">
+        <label>Açıklama / Dekont notu <small style="color:#666">(isteğe bağlı)</small></label>
+        <textarea name="not" placeholder="Örn: ad soyad, işlem saati veya dekont notu..."></textarea>
+        <button class="btn" type="submit">✅ Ödedim, Aktif Et</button>
+    </form>
+    {% endif %}
+
+    <a class="geri" href="/">← Ana sayfaya dön</a>
+</div>
+<script>
+function kopyala() {
+    navigator.clipboard.writeText("{{ iban }}");
+    document.getElementById('kopyalandi').style.display = 'inline';
+    setTimeout(() => document.getElementById('kopyalandi').style.display = 'none', 2000);
+}
+</script>
+</body>
+</html>

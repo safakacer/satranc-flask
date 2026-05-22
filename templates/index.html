@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satranç Koçu</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 16px;
+        }
+        h1 { font-size: 2rem; margin-bottom: 4px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .alt-baslik { color: #888; margin-bottom: 24px; font-size: 0.9rem; }
+
+        /* Durum çubuğu */
+        .durum-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 520px;
+        }
+        .durum-chip {
+            flex: 1;
+            background: #16213e;
+            border: 1px solid #0f3460;
+            border-radius: 10px;
+            padding: 12px 16px;
+            text-align: center;
+        }
+        .durum-chip .etiket { font-size: 0.75rem; color: #888; margin-bottom: 4px; }
+        .durum-chip .deger { font-size: 1.1rem; font-weight: 700; }
+        .premium-chip { border-color: #f59e0b !important; }
+        .premium-chip .deger { color: #f59e0b; }
+
+        .kart { background: #16213e; border: 1px solid #0f3460; border-radius: 16px; padding: 28px; width: 100%; max-width: 520px; }
+
+        .yukle-alani {
+            border: 2px dashed #334; border-radius: 12px; padding: 28px;
+            text-align: center; cursor: pointer; transition: all 0.2s;
+            position: relative; margin-bottom: 16px;
+        }
+        .yukle-alani:hover, .yukle-alani.uzerinde { border-color: #667eea; background: rgba(102,126,234,0.05); }
+        .yukle-alani input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+        .yukle-alani .ikon { font-size: 2.2rem; margin-bottom: 6px; }
+        .yukle-alani p { color: #888; font-size: 0.85rem; }
+
+        #onizleme { width: 100%; max-height: 220px; object-fit: contain; border-radius: 8px; margin-bottom: 16px; display: none; }
+
+        .sira-secim { display: flex; gap: 10px; margin-bottom: 16px; }
+        .sira-btn {
+            flex: 1; padding: 11px; border: 2px solid #334; border-radius: 10px;
+            background: transparent; color: #eee; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;
+        }
+        .sira-btn.aktif { border-color: #667eea; background: rgba(102,126,234,0.15); color: #667eea; }
+
+        .analiz-btn {
+            width: 100%; padding: 13px; background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none; border-radius: 10px; color: white; font-size: 1rem;
+            font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+        }
+        .analiz-btn:hover { opacity: 0.9; }
+        .analiz-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .yukleniyor { display: none; text-align: center; margin-top: 18px; color: #667eea; }
+        .spinner { width: 32px; height: 32px; border: 3px solid #334; border-top-color: #667eea; border-radius: 50%; animation: don 0.8s linear infinite; margin: 0 auto 8px; }
+        @keyframes don { to { transform: rotate(360deg); } }
+
+        .sonuc { margin-top: 20px; background: #0f3460; border-radius: 12px; overflow: hidden; display: none; animation: acil 0.3s ease; }
+        @keyframes acil { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .sonuc-satir { display: flex; justify-content: space-between; align-items: center; padding: 11px 18px; border-bottom: 1px solid #1a3a6e; }
+        .sonuc-satir:last-child { border-bottom: none; }
+        .sonuc-satir .etiket { color: #888; font-size: 0.82rem; }
+        .sonuc-satir .deger { font-weight: 600; }
+
+        .hamle-badge { background: linear-gradient(135deg, #667eea, #764ba2); padding: 3px 12px; border-radius: 20px; font-family: monospace; font-size: 1rem; }
+        .alt-hamle { background: #1a3a6e; padding: 2px 10px; border-radius: 14px; font-family: monospace; font-size: 0.85rem; margin-left: 4px; }
+
+        .yorum-kutu { padding: 14px 18px; background: rgba(102,126,234,0.1); border-left: 3px solid #667eea; font-size: 0.88rem; line-height: 1.5; color: #ccc; }
+
+        .hak-guncelle { padding: 10px 18px; background: rgba(245,158,11,0.1); border-top: 1px solid #1a3a6e; font-size: 0.82rem; color: #f59e0b; text-align: center; display: none; }
+
+        .hata { margin-top: 18px; padding: 14px 16px; background: rgba(220,50,50,0.12); border: 1px solid rgba(220,50,50,0.3); border-radius: 10px; color: #f88; display: none; }
+
+        .premium-banner {
+            margin-top: 18px; padding: 14px 18px;
+            background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(245,158,11,0.05));
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 10px; font-size: 0.85rem; color: #f59e0b; text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div style="width:100%;max-width:520px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <h1 style="margin-bottom:0">♟️ Satranç Koçu</h1>
+        <div style="display:flex;gap:8px;">
+            <a href="/gecmis" style="padding:7px 14px;background:#1a3a6e;border-radius:8px;color:#aaa;font-size:0.82rem;text-decoration:none;">📋 Geçmiş</a>
+            {% if not is_premium %}
+            <a href="/premium" style="padding:7px 14px;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:8px;color:#111;font-size:0.82rem;font-weight:700;text-decoration:none;">💎 Premium</a>
+            {% endif %}
+            <a href="/cikis" style="padding:7px 14px;background:#1a3a6e;border-radius:8px;color:#aaa;font-size:0.82rem;text-decoration:none;">Çıkış</a>
+        </div>
+    </div>
+    <p class="alt-baslik">Tahtanın fotoğrafını yükle, en iyi hamleyi bul</p>
+
+    <!-- Durum çubuğu -->
+    <div class="durum-bar">
+        <div class="durum-chip {% if is_premium %}premium-chip{% endif %}">
+            <div class="etiket">Durum</div>
+            <div class="deger">{% if is_premium %}⭐ Premium{% else %}Ücretsiz{% endif %}</div>
+        </div>
+        <div class="durum-chip" id="hakChip">
+            <div class="etiket">Kalan Hak</div>
+            <div class="deger" id="kalanHakDeger">{% if is_premium %}∞{% else %}{{ kalan_hak }}{% endif %}</div>
+        </div>
+        <div class="durum-chip">
+            <div class="etiket">Toplam Analiz</div>
+            <div class="deger" id="toplamAnaliz">{{ toplam_analiz }}</div>
+        </div>
+    </div>
+
+    <div class="kart">
+        <div class="yukle-alani" id="yukleAlani">
+            <input type="file" id="dosyaInput" accept="image/*">
+            <div class="ikon">📸</div>
+            <p>Fotoğraf yüklemek için tıkla veya sürükle bırak</p>
+        </div>
+
+        <img id="onizleme" alt="Önizleme">
+
+        <div class="sira-secim">
+            <button class="sira-btn aktif" data-sira="beyaz" onclick="siraSec(this)">⚪ Beyazda</button>
+            <button class="sira-btn" data-sira="siyah" onclick="siraSec(this)">⚫ Siyahda</button>
+        </div>
+
+        <button class="analiz-btn" onclick="analizYap()">🧠 Analiz Et</button>
+
+        <div class="yukleniyor" id="yukleniyor">
+            <div class="spinner"></div>
+            <p>Tahta okunuyor ve analiz ediliyor...</p>
+        </div>
+
+        <div class="sonuc" id="sonuc">
+            <div class="sonuc-satir">
+                <span class="etiket">Sıra</span>
+                <span class="deger" id="sira"></span>
+            </div>
+            <div class="sonuc-satir">
+                <span class="etiket">En İyi Hamle</span>
+                <span id="hamleAlani"></span>
+            </div>
+            <div class="sonuc-satir" id="skorSatir">
+                <span class="etiket">Skor</span>
+                <span class="deger" id="skor"></span>
+            </div>
+            <div class="yorum-kutu" id="yorum"></div>
+            <div class="hak-guncelle" id="hakGuncelle"></div>
+        </div>
+
+        <div class="hata" id="hata"></div>
+
+        <div class="premium-banner" id="premiumBanner">
+            💎 <strong>Premium'a geç:</strong> Sınırsız analiz + Top 3 hamle + Derin analiz
+            <br><a href="mailto:destek@satranckocu.com" style="color:#f59e0b;">Bilgi al →</a>
+        </div>
+    </div>
+
+    <script>
+        let seciliSira = 'beyaz';
+        {% if is_premium %}let isPremium = true;{% else %}let isPremium = false;{% endif %}
+
+        function siraSec(btn) {
+            document.querySelectorAll('.sira-btn').forEach(b => b.classList.remove('aktif'));
+            btn.classList.add('aktif');
+            seciliSira = btn.dataset.sira;
+        }
+
+        document.getElementById('dosyaInput').addEventListener('change', function () {
+            const dosya = this.files[0];
+            if (!dosya) return;
+            const onizleme = document.getElementById('onizleme');
+            onizleme.src = URL.createObjectURL(dosya);
+            onizleme.style.display = 'block';
+            document.querySelector('.yukle-alani .ikon').textContent = '✅';
+            document.getElementById('hata').style.display = 'none';
+            document.getElementById('sonuc').style.display = 'none';
+        });
+
+        const alan = document.getElementById('yukleAlani');
+        alan.addEventListener('dragover', e => { e.preventDefault(); alan.classList.add('uzerinde'); });
+        alan.addEventListener('dragleave', () => alan.classList.remove('uzerinde'));
+        alan.addEventListener('drop', e => {
+            e.preventDefault(); alan.classList.remove('uzerinde');
+            if (e.dataTransfer.files[0]) {
+                document.getElementById('dosyaInput').files = e.dataTransfer.files;
+                document.getElementById('dosyaInput').dispatchEvent(new Event('change'));
+            }
+        });
+
+        async function analizYap() {
+            const dosya = document.getElementById('dosyaInput').files[0];
+            if (!dosya) { alert('Önce bir fotoğraf seçin!'); return; }
+
+            const btn = document.querySelector('.analiz-btn');
+            btn.disabled = true;
+            document.getElementById('yukleniyor').style.display = 'block';
+            document.getElementById('sonuc').style.display = 'none';
+            document.getElementById('hata').style.display = 'none';
+            document.getElementById('premiumBanner').style.display = 'none';
+
+            const form = new FormData();
+            form.append('fotograf', dosya);
+            form.append('hamle_sirasi', seciliSira);
+
+            try {
+                const res = await fetch('/analiz', { method: 'POST', body: form });
+                const data = await res.json();
+                document.getElementById('yukleniyor').style.display = 'none';
+
+                if (data.hata) {
+                    document.getElementById('hata').textContent = data.hata;
+                    document.getElementById('hata').style.display = 'block';
+                    if (res.status === 403) {
+                        document.getElementById('premiumBanner').style.display = 'block';
+                    }
+                } else if (data.sonuc) {
+                    document.getElementById('hata').textContent = '🏁 ' + data.sonuc;
+                    document.getElementById('hata').style.display = 'block';
+                    document.getElementById('hata').style.cssText += 'background:rgba(50,200,50,0.1);border-color:rgba(50,200,50,0.3);color:#8f8;';
+                } else {
+                    // Hamle + alternatifler
+                    let hamleHtml = `<span class="hamle-badge">${data.en_iyi_hamle}</span>`;
+                    if (data.alternatifler && data.alternatifler.length > 0) {
+                        data.alternatifler.forEach(h => {
+                            hamleHtml += `<span class="alt-hamle">${h}</span>`;
+                        });
+                    }
+                    document.getElementById('hamleAlani').innerHTML = hamleHtml;
+                    document.getElementById('sira').textContent = data.sira;
+                    document.getElementById('skor').textContent = data.skor;
+                    document.getElementById('yorum').textContent = data.yorum || '';
+                    document.getElementById('sonuc').style.display = 'block';
+
+                    // Hak güncelle
+                    if (!data.is_premium) {
+                        document.getElementById('kalanHakDeger').textContent = data.kalan_hak;
+                        document.getElementById('hakGuncelle').textContent = `Kalan hakkın: ${data.kalan_hak}`;
+                        document.getElementById('hakGuncelle').style.display = 'block';
+                        if (data.kalan_hak <= 1) {
+                            document.getElementById('premiumBanner').style.display = 'block';
+                        }
+                    }
+
+                    // Toplam analiz
+                    const toplamEl = document.getElementById('toplamAnaliz');
+                    toplamEl.textContent = parseInt(toplamEl.textContent) + 1;
+                }
+            } catch (e) {
+                document.getElementById('yukleniyor').style.display = 'none';
+                document.getElementById('hata').textContent = '❌ Bağlantı hatası.';
+                document.getElementById('hata').style.display = 'block';
+            }
+
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>
