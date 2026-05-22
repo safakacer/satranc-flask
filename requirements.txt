@@ -1,0 +1,10 @@
+flask
+flask-cors
+python-chess
+google-genai
+Pillow
+numpy
+opencv-python-headless
+werkzeug
+PyJWT
+requests

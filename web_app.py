@@ -96,8 +96,14 @@ GEMINI_API_KEY = "AIzaSyBxoN2uWYEbbzbFQENoHurAn_0Ht8pOjuo"
 ai_client = genai.Client(api_key=GEMINI_API_KEY)
 
 su_anki_klasor = os.path.dirname(os.path.abspath(__file__))
-stockfish_dosyalari = [f for f in os.listdir(su_anki_klasor) if f.endswith('.exe')]
-STOCKFISH_PATH = os.path.join(su_anki_klasor, stockfish_dosyalari[0])
+
+# Windows: .exe dosyasını bul | Linux (Railway): sistem stockfish
+import shutil, platform
+if platform.system() == "Windows":
+    stockfish_dosyalari = [f for f in os.listdir(su_anki_klasor) if f.endswith('.exe')]
+    STOCKFISH_PATH = os.path.join(su_anki_klasor, stockfish_dosyalari[0])
+else:
+    STOCKFISH_PATH = shutil.which("stockfish") or "/usr/bin/stockfish"
 
 
 def sadece_tahtayi_kirp(pil_image):

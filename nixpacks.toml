@@ -1,0 +1,5 @@
+[phases.setup]
+nixPkgs = ["stockfish"]
+
+[start]
+cmd = "python web_app.py"
