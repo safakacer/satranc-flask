@@ -73,6 +73,8 @@ def veritabanini_hazirla():
         ("web_token", "TEXT UNIQUE"),
         ("premium_bitis", "TEXT DEFAULT ''"),
         ("created_at", "TEXT DEFAULT CURRENT_TIMESTAMP"),
+        ("google_id", "TEXT UNIQUE"),
+        ("apple_id", "TEXT UNIQUE"),
     ]:
         try:
             c.execute(f"ALTER TABLE kullanicilar ADD COLUMN {sutun} {tanim}")
@@ -93,6 +95,64 @@ def _premium_aktif_mi(row_is_premium, row_premium_bitis):
         return date.today() <= bitis
     except ValueError:
         return True
+
+
+def sosyal_giris_veya_kayit(email, google_id=None, apple_id=None):
+    """Google veya Apple ile giriş/kayıt. kullanici_id döner."""
+    conn = baglanti()
+    c = conn.cursor()
+    bugun = str(date.today())
+
+    # Önce google_id veya apple_id ile ara
+    if google_id:
+        c.execute("SELECT id FROM kullanicilar WHERE google_id = ?", (google_id,))
+        row = c.fetchone()
+        if row:
+            conn.close()
+            return row[0]
+
+    if apple_id:
+        c.execute("SELECT id FROM kullanicilar WHERE apple_id = ?", (apple_id,))
+        row = c.fetchone()
+        if row:
+            conn.close()
+            return row[0]
+
+    # Email ile ara (daha önce normal kayıt olmuş olabilir)
+    if email:
+        c.execute("SELECT id FROM kullanicilar WHERE email = ?", (email.lower().strip(),))
+        row = c.fetchone()
+        if row:
+            uid = row[0]
+            # google_id veya apple_id'yi güncelle
+            if google_id:
+                try:
+                    c.execute("UPDATE kullanicilar SET google_id = ? WHERE id = ?", (google_id, uid))
+                    conn.commit()
+                except Exception:
+                    pass
+            if apple_id:
+                try:
+                    c.execute("UPDATE kullanicilar SET apple_id = ? WHERE id = ?", (apple_id, uid))
+                    conn.commit()
+                except Exception:
+                    pass
+            conn.close()
+            return uid
+
+    # Yeni kullanıcı oluştur
+    try:
+        c.execute(
+            "INSERT INTO kullanicilar (email, google_id, apple_id, kalan_hak, son_yenileme) VALUES (?, ?, ?, ?, ?)",
+            (email.lower().strip() if email else None, google_id, apple_id, UCRETSIZ_GUNLUK_HAK, bugun)
+        )
+        conn.commit()
+        uid = c.lastrowid
+        conn.close()
+        return uid
+    except sqlite3.IntegrityError:
+        conn.close()
+        return None
 
 
 def kayit_ol(email, sifre, bildirim_chat_id=None):

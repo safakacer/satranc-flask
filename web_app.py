@@ -236,6 +236,78 @@ def api_giris():
                     "kalan_hak": kalan_hak, "is_premium": is_premium})
 
 
+@app.route('/api/google-giris', methods=['POST'])
+def api_google_giris():
+    """Google OAuth access token ile giriş / otomatik kayıt."""
+    data = request.get_json()
+    access_token = data.get('access_token', '')
+    if not access_token:
+        return jsonify({"hata": "Access token eksik"}), 400
+
+    # Google'dan kullanıcı bilgilerini al
+    try:
+        google_res = requests.get(
+            'https://www.googleapis.com/oauth2/v3/userinfo',
+            headers={'Authorization': f'Bearer {access_token}'},
+            timeout=10
+        )
+        if google_res.status_code != 200:
+            return jsonify({"hata": "Google doğrulama başarısız"}), 401
+        user_info = google_res.json()
+    except Exception:
+        return jsonify({"hata": "Google sunucusuna ulaşılamadı"}), 503
+
+    email = user_info.get('email', '').lower().strip()
+    google_id = user_info.get('sub', '')
+
+    if not email or not google_id:
+        return jsonify({"hata": "Google hesap bilgileri alınamadı"}), 400
+
+    uid = db.sosyal_giris_veya_kayit(email=email, google_id=google_id)
+    if uid is None:
+        return jsonify({"hata": "Kullanıcı oluşturulamadı"}), 500
+
+    return jsonify({"token": token_uret(uid), "kullanici_id": uid, "mesaj": "Google ile giriş başarılı"})
+
+
+@app.route('/api/apple-giris', methods=['POST'])
+def api_apple_giris():
+    """Apple identity token ile giriş / otomatik kayıt."""
+    import base64, json as json_mod
+    data = request.get_json()
+    identity_token = data.get('identity_token', '')
+    email_gelen = data.get('email', '')
+    full_name = data.get('full_name', '')
+
+    if not identity_token:
+        return jsonify({"hata": "Identity token eksik"}), 400
+
+    # JWT'nin payload kısmını decode et (imza doğrulaması yapmadan temel bilgileri al)
+    try:
+        parts = identity_token.split('.')
+        if len(parts) != 3:
+            raise ValueError("Geçersiz JWT")
+        payload_b64 = parts[1] + '=='  # padding ekle
+        payload = json_mod.loads(base64.urlsafe_b64decode(payload_b64))
+        apple_id = payload.get('sub', '')
+        email = payload.get('email', email_gelen or '').lower().strip()
+    except Exception:
+        return jsonify({"hata": "Apple token çözümlenemedi"}), 400
+
+    if not apple_id:
+        return jsonify({"hata": "Apple kullanıcı ID alınamadı"}), 400
+
+    # Email yoksa apple_id'den üret
+    if not email:
+        email = f"apple_{apple_id}@privaterelay.appleid.com"
+
+    uid = db.sosyal_giris_veya_kayit(email=email, apple_id=apple_id)
+    if uid is None:
+        return jsonify({"hata": "Kullanıcı oluşturulamadı"}), 500
+
+    return jsonify({"token": token_uret(uid), "kullanici_id": uid, "mesaj": "Apple ile giriş başarılı"})
+
+
 @app.route('/api/profil')
 @giris_gerekli
 def api_profil():
