@@ -75,6 +75,8 @@ def veritabanini_hazirla():
         ("created_at", "TEXT DEFAULT CURRENT_TIMESTAMP"),
         ("google_id", "TEXT UNIQUE"),
         ("apple_id", "TEXT UNIQUE"),
+        ("reklam_hak_gun", "TEXT DEFAULT ''"),
+        ("reklam_hak_sayisi", "INTEGER DEFAULT 0"),
     ]:
         try:
             c.execute(f"ALTER TABLE kullanicilar ADD COLUMN {sutun} {tanim}")
@@ -439,6 +441,32 @@ def premium_ver(kullanici_id, ay=1):
     conn.commit()
     conn.close()
     return yeni_bitis
+
+
+def reklam_hak_ekle(kullanici_id, gunluk_limit=5):
+    """Reklam izleyince +1 hak ekle. Günde max gunluk_limit kez."""
+    conn = baglanti()
+    c = conn.cursor()
+    bugun = str(date.today())
+    c.execute("SELECT kalan_hak, reklam_hak_gun, reklam_hak_sayisi FROM kullanicilar WHERE id = ?", (kullanici_id,))
+    row = c.fetchone()
+    if not row:
+        conn.close()
+        return False, "Kullanıcı bulunamadı"
+    kalan_hak, reklam_gun, reklam_sayisi = row
+    # Yeni gün mü?
+    if reklam_gun != bugun:
+        reklam_sayisi = 0
+    if reklam_sayisi >= gunluk_limit:
+        conn.close()
+        return False, f"Bugün maksimum {gunluk_limit} reklam izleyebilirsin"
+    c.execute(
+        "UPDATE kullanicilar SET kalan_hak = kalan_hak + 1, reklam_hak_gun = ?, reklam_hak_sayisi = ? WHERE id = ?",
+        (bugun, reklam_sayisi + 1, kullanici_id)
+    )
+    conn.commit()
+    conn.close()
+    return True, kalan_hak + 1
 
 
 def analiz_gecmisi(kullanici_id, limit=10):

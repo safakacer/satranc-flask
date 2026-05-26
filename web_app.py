@@ -355,6 +355,17 @@ def api_premium_ver():
     bitis = db.premium_ver(uid, ay=1)
     return jsonify({"mesaj": "Premium aktif edildi", "bitis": str(bitis)})
 
+
+@app.route('/api/reklam-hak', methods=['POST'])
+@giris_gerekli
+def api_reklam_hak():
+    """Rewarded reklam izleyince +1 analiz hakkı ver (günde max 5)."""
+    uid = session['kullanici_id']
+    basarili, sonuc = db.reklam_hak_ekle(uid, gunluk_limit=5)
+    if basarili:
+        return jsonify({"mesaj": "Hak eklendi", "kalan_hak": sonuc})
+    return jsonify({"hata": sonuc}), 400
+
 # ──────────────────────────────────────────────────────────────
 
 
