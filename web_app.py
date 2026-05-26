@@ -347,6 +347,14 @@ def api_odeme_bildir():
         f"Admin panelinden onayla: http://localhost:5000/admin"
     )
     return jsonify({"mesaj": "Ödeme bildirimi alındı. Admin onayından sonra aktif edilecek."})
+@app.route('/api/premium-ver', methods=['POST'])
+@giris_gerekli
+def api_premium_ver():
+    """Google Play / RevenueCat satın alma sonrası premium aktif et."""
+    uid = session['kullanici_id']
+    bitis = db.premium_ver(uid, ay=1)
+    return jsonify({"mesaj": "Premium aktif edildi", "bitis": str(bitis)})
+
 # ──────────────────────────────────────────────────────────────
 
 
